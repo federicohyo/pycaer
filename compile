@@ -4,15 +4,9 @@
 
 DIRECTORY="$(dirname "$0")"
 fn=$1
-firstParameter=$2
-secondParameter=$3
-allParameters=${@:2}
 
 export DIRECTORY
 export fn
-export firstParameter
-export secondParameter
-export allParameters
 
 # Compile libcaer
 
