@@ -10,5 +10,5 @@ add_subdirectory(pybind11)
 INCLUDE_DIRECTORIES(${LIBCAER_INCLUDE_DIRS})
 LINK_DIRECTORIES(${LIBCAER_LIBRARY_DIRS})
 
-pybind11_add_module(pycaer pycaer.cpp)
+pybind11_add_module(pycaer src/pycaer.cpp)
 TARGET_LINK_LIBRARIES(pycaer LINK_PRIVATE caer)
