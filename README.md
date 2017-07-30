@@ -5,7 +5,7 @@ Python `libcaer` bindings with Pybind11
 ## Clone the repository
 
 ```
-git clone --recursive git@github.com:duguyue100/pycaer.git
+git clone --recursive https://github.com/duguyue100/pycaer.git
 ```
 
 ## Compilation
