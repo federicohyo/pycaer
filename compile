@@ -30,7 +30,7 @@ case "$fn" in
             export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$PWD/libcaer/build/lib/pkgconfig
             mkdir build
             cd build
-            cmake ..
+            cmake -DPYTHON_EXECUTABLE:FILEPATH=$(which python) ..
             make
         else
             echo "[MESSAGE] pycaer compiled"
@@ -57,7 +57,7 @@ case "$fn" in
             mkdir build
         fi
         cd build
-        cmake -DPYTHON_EXECUTABLE:FILEPATH=$HOME/anaconda/bin/python ..
+        cmake -DPYTHON_EXECUTABLE:FILEPATH=$(which python) ..
         make
     ;;
 
