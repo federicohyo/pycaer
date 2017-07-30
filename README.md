@@ -22,6 +22,15 @@ $ ./compile make
 $ ./compile clean
 ```
 
+## How to use
+
+The program is compiled as a single shared library `pycaer.so`,
+one can directly import it in Python
+
+```python
+import pycaer
+```
+
 ## Contacts
 
 Yuhuang Hu  
