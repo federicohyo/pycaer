@@ -1,8 +1,9 @@
 /*
- * libcaer.cpp
+ * pycaer.cpp
  *
  *  Created on: 29 Jul 2017
- *      Author: dgyHome
+ *      Author: Yuhuang Hu
+ *      Email : duguyue100@gmail.com
  */
 
 #include <pybind11/pybind11.h>
