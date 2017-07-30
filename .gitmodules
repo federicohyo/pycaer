@@ -3,4 +3,4 @@
 	url = https://github.com/inilabs/libcaer.git
 [submodule "pybind11"]
 	path = pybind11
-	url = https://github.com/duguyue100/pycaer.git
+	url = https://github.com/pybind/pybind11.git
