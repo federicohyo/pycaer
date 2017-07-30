@@ -1,0 +1,75 @@
+#!/bin/sh
+
+# This script is to compile library
+
+DIRECTORY="$(dirname "$0")"
+fn=$1
+firstParameter=$2
+secondParameter=$3
+allParameters=${@:2}
+
+export DIRECTORY
+export fn
+export firstParameter
+export secondParameter
+export allParameters
+
+# Compile libcaer
+
+case "$fn" in
+    "make")
+        cd libcaer
+        mkdir build
+        cmake -DCMAKE_INSTALL_PREFIX=./build .
+        make
+        make install
+        cd ..
+
+        # Compile pycaer
+        PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$PWD/libcaer/build/lib/pkgconfig
+        mkdir build
+        cd build
+        cmake ..
+        make
+    ;;
+
+    "clean")
+        # remove build directory
+        rm -rf $PWD/build
+
+        # remove libcaer files
+        rm $PWD/libcaer/CMakeCache.txt
+        rm -rf $PWD/libcaer/CMakeFiles
+        rm $PWD/libcaer/Makefile
+        rm -rf $PWD/libcaer/build
+        rm $PWD/libcaer/cmake_install.cmake
+        rm $PWD/libcaer/install_manifest.txt
+        rm $PWD/libcaer/libcaer.pc
+
+        rm $PWD/libcaer/docs/cmake_install.cmake
+        rm -rf $PWD/libcaer/docs/CMakeFiles
+        rm $PWD/libcaer/docs/libcaer_api.doxy
+        rm $PWD/libcaer/docs/Makefile
+
+        rm $PWD/libcaer/include/cmake_install.cmake
+        rm -rf $PWD/libcaer/include/CMakeFiles
+        rm $PWD/libcaer/include/libcaer.h
+        rm $PWD/libcaer/include/Makefile
+
+        rm $PWD/libcaer/includecpp/cmake_install.cmake
+        rm -rf $PWD/libcaer/includecpp/CMakeFiles
+        rm $PWD/libcaer/includecpp/Makefile
+
+        rm $PWD/libcaer/src/cmake_install.cmake
+        rm -rf $PWD/libcaer/src/CMakeFiles
+        rm $PWD/libcaer/src/Makefile
+        if [[ "$OSTYPE" == "linux-gnu" ]]; then
+            # for linux
+            rm $PWD/libcaer/src/*.so.*
+        elif [[ "$OSTYPE" == "darwin"* ]]; then
+            # for mac
+            rm $PWD/libcaer/src/*.dylib
+        fi
+    ;;
+
+esac
