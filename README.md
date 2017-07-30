@@ -1,2 +1,28 @@
-# pycaer
-Python libcaer bindings with Pybind11
+# PyCAER
+
+Python `libcaer` bindings with Pybind11
+
+## Clone the repository
+
+```
+git clone --recursive git@github.com:duguyue100/pycaer.git
+```
+
+## Compilation
+
+To compile the library, use following command
+
+```
+$ ./compile make
+```
+
+## Clean Compilation
+
+```
+$ ./compile clean
+```
+
+## Contacts
+
+Yuhuang Hu  
+Email: duguyue100@gmail.com
