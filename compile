@@ -27,7 +27,7 @@ case "$fn" in
         if [ ! -d "$PWD/build" ]; then
             echo "[MESSAGE] Compiling pycaer"
             # Compile pycaer
-            PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$PWD/libcaer/build/lib/pkgconfig
+            export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$PWD/libcaer/build/lib/pkgconfig
             mkdir build
             cd build
             cmake ..
@@ -52,12 +52,12 @@ case "$fn" in
     "make.py")
         echo "[MESSAGE] Compiling pycaer"
         # Compile pycaer
-        PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$PWD/libcaer/build/lib/pkgconfig
+        export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$PWD/libcaer/build/lib/pkgconfig
         if [ ! -d "$PWD/build" ]; then
             mkdir build
         fi
         cd build
-        cmake ..
+        cmake -DPYTHON_EXECUTABLE:FILEPATH=$HOME/anaconda/bin/python ..
         make
     ;;
 
