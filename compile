@@ -43,6 +43,30 @@ case "$fn" in
         fi
     ;;
 
+    "make.lib")
+        echo "[MESSAGE] Compiling libcaer"
+        cd libcaer
+        if [ ! -d "$PWD/libcaer/build" ]; then
+            mkdir build
+        fi
+        cmake -DCMAKE_INSTALL_PREFIX=./build .
+        make
+        make install
+        cd ..
+    ;;
+
+    "make.py")
+        echo "[MESSAGE] Compiling pycaer"
+        # Compile pycaer
+        PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$PWD/libcaer/build/lib/pkgconfig
+        if [ ! -d "$PWD/build" ]; then
+            mkdir build
+        fi
+        cd build
+        cmake ..
+        make
+    ;;
+
     "clean")
         # remove build directory
         echo "[MESSAGE] Removing pycaer build directory"
