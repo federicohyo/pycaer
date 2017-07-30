@@ -98,10 +98,10 @@ case "$fn" in
         rm -rf $PWD/libcaer/src/CMakeFiles
         rm $PWD/libcaer/src/Makefile
         echo "[MESSAGE] Removing compiled dynamic library"
-        if [[ "$OSTYPE" == "linux-gnu" ]]; then
+        if [ "$OSTYPE" == "linux-gnu" ]; then
             # for linux
             rm $PWD/libcaer/src/*.so.*
-        elif [[ "$OSTYPE" == "darwin"* ]]; then
+        elif [ "$OSTYPE" == "darwin"* ]; then
             # for mac
             rm $PWD/libcaer/src/*.dylib
         fi
