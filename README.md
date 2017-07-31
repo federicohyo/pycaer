@@ -2,6 +2,15 @@
 
 Python `libcaer` bindings with Pybind11
 
+## Prerequisites
+
++ [Anaconda](https://anaconda.org/)
++ CMake
++ Git
++ `libusb`
++ `libserialport` (optional)
++ OpenCV (support from Anaconda)
+
 ## Clone the repository
 
 ```

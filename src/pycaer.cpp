@@ -27,7 +27,7 @@ using namespace libcaer::devices;
 PYBIND11_MODULE(pycaer, libpycaer) {
 	libpycaer.doc() = "The master module of libcaer";
 
-	// Log
+	// ------ Log ------
     py::module pylog = libpycaer.def_submodule("log", "The log submodule");
 
     py::enum_<libcaer::log::logLevel>(pylog, "logLevel")
@@ -68,7 +68,7 @@ PYBIND11_MODULE(pycaer, libpycaer) {
 
     });
 
-    // Network
+    // ------ Network ------
     py::module pynetwork = libpycaer.def_submodule("network", "The Network submodule");
     py::class_<AEDAT3NetworkHeader>(pynetwork, "AEDAT3NetworkHeader")
     	.def(py::init<>())
@@ -84,7 +84,7 @@ PYBIND11_MODULE(pycaer, libpycaer) {
 		.def("getSourceID", &AEDAT3NetworkHeader::getSourceID)
 		.def("setSourceID", &AEDAT3NetworkHeader::setSourceID);
 
-    // Events
+    // ------ Events ------
     py::module pyevents = libpycaer.def_submodule("events", "The Events submodule");
 
     // EventPacket
@@ -132,7 +132,7 @@ PYBIND11_MODULE(pycaer, libpycaer) {
         .def("size", &EventPacket::size)
         .def("empty", &EventPacket::empty);
 
-    // Devices
+    // ------ Devices ------
     py::module pydevices = libpycaer.def_submodule("devices", "The Devices submodule");
 
     // DEVICE
