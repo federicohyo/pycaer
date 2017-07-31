@@ -12,11 +12,17 @@
 #include <libcaercpp/network.hpp>
 #include <libcaercpp/events/utils.hpp>
 #include <libcaercpp/events/packetContainer.hpp>
+#include <libcaercpp/devices/device.hpp>
+#include <libcaercpp/devices/davis.hpp>
+#include <libcaercpp/devices/dvs128.hpp>
+#include <libcaercpp/devices/dynapse.hpp>
+#include <libcaercpp/devices/edvs.hpp>
 
 namespace py = pybind11;
 //using namespace libcaer::log;
 using namespace libcaer::network;
 using namespace libcaer::events;
+using namespace libcaer::devices;
 
 PYBIND11_MODULE(pycaer, libpycaer) {
 	libpycaer.doc() = "The master module of libcaer";
@@ -127,5 +133,69 @@ PYBIND11_MODULE(pycaer, libpycaer) {
         .def("empty", &EventPacket::empty);
 
     // Devices
+    py::module pydevices = libpycaer.def_submodule("devices", "The Devices submodule");
+
+    // DEVICE
+    py::class_<device> ddevice(pydevices, "device");
+    ddevice
+        .def("sendDefaultConfig", &device::sendDefaultConfig)
+        .def("configSet", &device::configSet)
+        // TODO
+        // .def("configGet", (void (device::*)(int8_t, uint8_t, uint32_t *)), &device::configGet)
+        // .def("configGet", (uint32_t (device::*)(int8_t, uint8_t)), &device::configGet)
+        .def("dataStart", &device::dataStart)
+        .def("dataStop", &device::dataStop)
+        .def("dataGet", &device::dataGet);
+    
+    // DAVIS
+    py::class_<davis> davis_device(pydevices, "davis");
+    davis_device
+        .def(py::init<uint16_t>())
+        .def(py::init<uint16_t, uint8_t, uint8_t, const std::string &>())
+        // TODO review for static functions
+        .def("infoGet", &davis::infoGet)
+        .def("biasVDACGenerate", &davis::biasVDACGenerate)
+        .def("biasVDACParse", &davis::biasVDACParse)
+        .def("biasCoarseFineGenerate", &davis::biasCoarseFineGenerate)
+        .def("biasCoarseFineParse", &davis::biasCoarseFineParse)
+        .def("biasShiftedSourceGenerate", &davis::biasShiftedSourceGenerate)
+        .def("biasShiftedSourceParse", &davis::biasShiftedSourceParse);
+
+    py::class_<davisfx2> davisfx2_device(pydevices, "davisfx2");
+    davisfx2_device
+        .def(py::init<uint16_t>())
+        .def(py::init<uint16_t, uint8_t, uint8_t, const std::string &>());
+
+    py::class_<davisfx3> davisfx3_device(pydevices, "davisfx3");
+    davisfx3_device
+        .def(py::init<uint16_t>())
+        .def(py::init<uint16_t, uint8_t, uint8_t, const std::string &>());
+
+    // DVS128
+    py::class_<dvs128> dvs128_device(pydevices, "dvs128");
+    dvs128_device
+        .def(py::init<uint16_t>())
+        .def(py::init<uint16_t, uint8_t, uint8_t, const std::string &>())
+        .def("infoGet", &dvs128::infoGet);
+
+    // DYNAPSE
+    py::class_<dynapse> dynapse_device(pydevices, "dynapse");
+    dynapse_device
+        .def(py::init<uint16_t>())
+        .def(py::init<uint16_t, uint8_t, uint8_t, const std::string &>())
+        .def("infoGet", &dynapse::infoGet)
+        .def("sendDataToUSB", &dynapse::sendDataToUSB)
+        .def("writeSramWords", &dynapse::writeSramWords)
+        .def("writeSram", &dynapse::writeSram)
+        .def("writePoissonSpikeRate", &dynapse::writePoissonSpikeRate)
+        .def("writeCam", &dynapse::writeCam)
+        .def("generateCamBits", &dynapse::generateCamBits);
+
+    // eDVS
+    py::class_<edvs> edvs_device(pydevices, "edvs");
+    edvs_device
+        .def(py::init<uint16_t, const std::string &, uint32_t>())
+        .def("infoGet", &edvs::infoGet);
+
 }
 
