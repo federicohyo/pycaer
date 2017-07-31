@@ -38,9 +38,17 @@ PYBIND11_MODULE(pycaer, libpycaer) {
     pylog.def("fileDescriptorsSet", &libcaer::log::fileDescriptorsSet);
     pylog.def("fileDescriptorsGetFirst", &libcaer::log::fileDescriptorsGetFirst);
     pylog.def("fileDescriptorsGetSecond", &libcaer::log::fileDescriptorsGetSecond);
-//    pylog.def("log", &libcaer::log::log);
-    pylog.def("logVA", &libcaer::log::logVA);
-    pylog.def("logVAFull", &libcaer::log::logVAFull);
+    pylog.def("log", [](libcaer::log::logLevel l, const char *subSystem, const char *format, py::args args){
+        libcaer::log::log(l, subSystem, format, *args);
+    });
+    // pylog.def("logVA", [](libcaer::log::logLevel l, const char *subSystem, const char *format, py::kwargs kwargs){
+    //     libcaer::log::logVA(l, subSystem, format, **kwargs);
+    // });
+    // pylog.def("logVAFull", [](int logFileDescriptor1, int logFileDescriptor2, uint8_t systemLogLevel, libcaer::log::logLevel l, const char *subSystem, const char *format, py::kwargs kwargs){
+    //     libcaer::log::logVAFull(logFileDescriptor1, logFileDescriptor2, systemLogLevel, l, subSystem, format, **kwargs);
+    // });
+    // pylog.def("logVA", &libcaer::log::logVA);
+    // pylog.def("logVAFull", &libcaer::log::logVAFull);
 
     // Network
     py::module pynetwork = libpycaer.def_submodule("network", "The Network submodule");
