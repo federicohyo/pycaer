@@ -16,6 +16,7 @@
 namespace py = pybind11;
 //using namespace libcaer::log;
 using namespace libcaer::network;
+using namespace libcaer::events;
 
 PYBIND11_MODULE(pycaer, libpycaer) {
 	libpycaer.doc() = "The master module of libcaer";
@@ -78,6 +79,52 @@ PYBIND11_MODULE(pycaer, libpycaer) {
 		.def("setSourceID", &AEDAT3NetworkHeader::setSourceID);
 
     // Events
+    py::module pyevents = libpycaer.def_submodule("events", "The Events submodule");
+
+    // EventPacket
+    py::class_<EventPacket> event_packet(pyevents, "EventPacket");
+    event_packet
+        // .def("header", &EventPacket::header)
+        // .def("isMemoryOwner", &EventPacket::isMemoryOwner)
+        // .def(py::init<>())
+        .def(py::init<caerEventPacketHeader, bool>())
+        .def(py::init<const EventPacket &>())
+        // TODO missed many inits
+        .def("getEventType", &EventPacket::getEventType)
+        .def("setEventType", &EventPacket::setEventType)
+        .def("getEventSource", &EventPacket::getEventSource)
+        .def("setEventSource", &EventPacket::setEventSource)
+        .def("getEventSize", &EventPacket::getEventSize)
+        .def("setEventSize", &EventPacket::setEventSize)
+        .def("getEventTSOffset", &EventPacket::getEventTSOffset)
+        .def("setEventTSOffset", &EventPacket::setEventTSOffset)
+        .def("getEventTSOverflow", &EventPacket::getEventTSOverflow)
+        .def("setEventTSOverflow", &EventPacket::setEventTSOverflow)
+        .def("getEventCapacity", &EventPacket::getEventCapacity)
+        .def("setEventCapacity", &EventPacket::setEventCapacity)
+        .def("getEventNumber", &EventPacket::getEventNumber)
+        .def("setEventNumber", &EventPacket::setEventNumber)
+        .def("getEventValid", &EventPacket::getEventValid)
+        .def("setEventValid", &EventPacket::setEventValid)
+        // .def("GenericEvent",
+        .def("genericGetEvent", &EventPacket::genericGetEvent)
+        .def("getDataSize", &EventPacket::getDataSize)
+        .def("getSize", &EventPacket::getSize)
+        .def("clear", &EventPacket::clear)
+        .def("clean", &EventPacket::clean)
+        .def("resize", &EventPacket::resize)
+        .def("shrink_to_fit", &EventPacket::shrink_to_fit)
+        .def("grow", &EventPacket::grow)
+        .def("append", &EventPacket::append)
+        // copyTypes
+        .def("copy", &EventPacket::copy)
+        .def("swap", &EventPacket::swap)
+        // .def("getHeaderPointer", &EventPacket::getHeaderPointer)
+        //caerEventPacketHeaderConst getHeaderPointer()
+        .def("isPacketMemoryOwner", &EventPacket::isPacketMemoryOwner)
+        .def("capacity", &EventPacket::capacity)
+        .def("size", &EventPacket::size)
+        .def("empty", &EventPacket::empty);
 
     // Devices
 }
