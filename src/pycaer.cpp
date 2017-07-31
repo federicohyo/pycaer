@@ -38,8 +38,9 @@ PYBIND11_MODULE(pycaer, libpycaer) {
     pylog.def("fileDescriptorsSet", &libcaer::log::fileDescriptorsSet);
     pylog.def("fileDescriptorsGetFirst", &libcaer::log::fileDescriptorsGetFirst);
     pylog.def("fileDescriptorsGetSecond", &libcaer::log::fileDescriptorsGetSecond);
-    pylog.def("log", [](libcaer::log::logLevel l, const char *subSystem, const char *format, py::args args){
-        libcaer::log::log(l, subSystem, format, *args);
+    pylog.def("log", [](libcaer::log::logLevel l, const char *subSystem, py::str format, py::args args, py::kwargs kwargs){
+        std::string formatted = format.format(*args, **kwargs);
+        libcaer::log::log(l, subSystem, formatted.c_str());
     });
     // pylog.def("logVA", [](libcaer::log::logLevel l, const char *subSystem, const char *format, py::kwargs kwargs){
     //     libcaer::log::logVA(l, subSystem, format, **kwargs);
