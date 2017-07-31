@@ -7,6 +7,7 @@
  */
 
 #include <pybind11/pybind11.h>
+#include <libcaer/libcaer.h>
 #include <libcaercpp/libcaer.hpp>
 #include <libcaercpp/network.hpp>
 #include <libcaercpp/events/utils.hpp>
@@ -38,18 +39,27 @@ PYBIND11_MODULE(pycaer, libpycaer) {
     pylog.def("fileDescriptorsSet", &libcaer::log::fileDescriptorsSet);
     pylog.def("fileDescriptorsGetFirst", &libcaer::log::fileDescriptorsGetFirst);
     pylog.def("fileDescriptorsGetSecond", &libcaer::log::fileDescriptorsGetSecond);
+
     pylog.def("log", [](libcaer::log::logLevel l, const char *subSystem, py::str format, py::args args, py::kwargs kwargs){
         std::string formatted = format.format(*args, **kwargs);
         libcaer::log::log(l, subSystem, formatted.c_str());
     });
-    // pylog.def("logVA", [](libcaer::log::logLevel l, const char *subSystem, const char *format, py::kwargs kwargs){
-    //     libcaer::log::logVA(l, subSystem, format, **kwargs);
-    // });
-    // pylog.def("logVAFull", [](int logFileDescriptor1, int logFileDescriptor2, uint8_t systemLogLevel, libcaer::log::logLevel l, const char *subSystem, const char *format, py::kwargs kwargs){
-    //     libcaer::log::logVAFull(logFileDescriptor1, logFileDescriptor2, systemLogLevel, l, subSystem, format, **kwargs);
-    // });
-    // pylog.def("logVA", &libcaer::log::logVA);
-    // pylog.def("logVAFull", &libcaer::log::logVAFull);
+
+    pylog.def("logVA", [](libcaer::log::logLevel l, const char *subSystem, py::str format, py::args args, py::kwargs kwargs){
+        va_list argumentList;
+        std::string formatted = format.format(*args, **kwargs);
+
+        caerLogVA(static_cast<enum caer_log_level>(static_cast<typename std::underlying_type<libcaer::log::logLevel>::type>(l)), subSystem, formatted.c_str(), argumentList);
+    });
+
+    pylog.def("logVAFull", [](int logFileDescriptor1, int logFileDescriptor2, uint8_t systemLogLevel, libcaer::log::logLevel l, const char *subSystem, py::str format, py::args args, py::kwargs kwargs){
+        va_list argumentList;
+        std::string formatted = format.format(*args, **kwargs);
+
+        caerLogVAFull(logFileDescriptor1, logFileDescriptor2, systemLogLevel,
+                static_cast<enum caer_log_level>(static_cast<typename std::underlying_type<libcaer::log::logLevel>::type>(l)), subSystem, formatted.c_str(), argumentList);
+
+    });
 
     // Network
     py::module pynetwork = libpycaer.def_submodule("network", "The Network submodule");
