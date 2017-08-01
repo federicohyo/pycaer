@@ -140,9 +140,8 @@ PYBIND11_MODULE(pycaer, libpycaer) {
     ddevice
         .def("sendDefaultConfig", &device::sendDefaultConfig)
         .def("configSet", &device::configSet)
-        // TODO
-        // .def("configGet", (void (device::*)(int8_t, uint8_t, uint32_t *)), &device::configGet)
-        // .def("configGet", (uint32_t (device::*)(int8_t, uint8_t)), &device::configGet)
+        .def("configGet", (void (device::*)(int8_t, uint8_t, uint32_t *) const) &device::configGet, "return void")
+        .def("configGet", (uint32_t (device::*)(int8_t, uint8_t) const) &device::configGet, "return uint32_t")
         .def("dataStart", &device::dataStart)
         .def("dataStop", &device::dataStop)
         .def("dataGet", &device::dataGet);
@@ -152,14 +151,13 @@ PYBIND11_MODULE(pycaer, libpycaer) {
     davis_device
         .def(py::init<uint16_t>())
         .def(py::init<uint16_t, uint8_t, uint8_t, const std::string &>())
-        // TODO review for static functions
         .def("infoGet", &davis::infoGet)
-        .def("biasVDACGenerate", &davis::biasVDACGenerate)
-        .def("biasVDACParse", &davis::biasVDACParse)
-        .def("biasCoarseFineGenerate", &davis::biasCoarseFineGenerate)
-        .def("biasCoarseFineParse", &davis::biasCoarseFineParse)
-        .def("biasShiftedSourceGenerate", &davis::biasShiftedSourceGenerate)
-        .def("biasShiftedSourceParse", &davis::biasShiftedSourceParse);
+        .def_static("biasVDACGenerate", &davis::biasVDACGenerate)
+        .def_static("biasVDACParse", &davis::biasVDACParse)
+        .def_static("biasCoarseFineGenerate", &davis::biasCoarseFineGenerate)
+        .def_static("biasCoarseFineParse", &davis::biasCoarseFineParse)
+        .def_static("biasShiftedSourceGenerate", &davis::biasShiftedSourceGenerate)
+        .def_static("biasShiftedSourceParse", &davis::biasShiftedSourceParse);
 
     py::class_<davisfx2> davisfx2_device(pydevices, "davisfx2");
     davisfx2_device
