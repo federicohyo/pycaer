@@ -173,6 +173,13 @@ PYBIND11_MODULE(pycaer, libpycaer) {
     //     .def("getEvent", (EventPacketCommon::const_reference (EventPacketCommon::*)(EventPacketCommon::size_type) const) &EventPacketCommon::getEvent);
 
     // ConfigurationEvent
+    py::class_<caer_configuration_event> caer_config_event(pyevents, "caer_configuration_event");
+    caer_config_event
+        .def_readwrite("moduleAddress", caer_configuration_event::moduleAddress)
+        .def_readwrite("parameterAddress", caer_configuration_event::parameterAddress)
+        .def_readwrite("parameter", caer_configuration_event::parameter)
+        .def_readwrite("timestamp", caer_configuration_event::timestamp);
+
     py::class_<ConfigurationEvent, caer_configuration_event> config_event(pyevents, "ConfigurationEvent");
     config_event
         .def("getTimestamp", &ConfigurationEvent::getTimestamp)
