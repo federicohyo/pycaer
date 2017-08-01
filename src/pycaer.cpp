@@ -90,12 +90,10 @@ PYBIND11_MODULE(pycaer, libpycaer) {
     // EventPacket
     py::class_<EventPacket> event_packet(pyevents, "EventPacket");
     event_packet
-        // .def("header", &EventPacket::header)
-        // .def("isMemoryOwner", &EventPacket::isMemoryOwner)
-        // .def(py::init<>())
         .def(py::init<caerEventPacketHeader, bool>())
         .def(py::init<const EventPacket &>())
-        // TODO missed many inits
+        // .def(py::init<EventPacket &&>())
+        // TODO operators ==, !=
         .def("getEventType", &EventPacket::getEventType)
         .def("setEventType", &EventPacket::setEventType)
         .def("getEventSource", &EventPacket::getEventSource)
@@ -112,7 +110,7 @@ PYBIND11_MODULE(pycaer, libpycaer) {
         .def("setEventNumber", &EventPacket::setEventNumber)
         .def("getEventValid", &EventPacket::getEventValid)
         .def("setEventValid", &EventPacket::setEventValid)
-        // .def("GenericEvent",
+        // GenericEvent
         .def("genericGetEvent", &EventPacket::genericGetEvent)
         .def("getDataSize", &EventPacket::getDataSize)
         .def("getSize", &EventPacket::getSize)
@@ -125,12 +123,25 @@ PYBIND11_MODULE(pycaer, libpycaer) {
         // copyTypes
         .def("copy", &EventPacket::copy)
         .def("swap", &EventPacket::swap)
-        // .def("getHeaderPointer", &EventPacket::getHeaderPointer)
-        //caerEventPacketHeaderConst getHeaderPointer()
+        .def("getHeaderPointer", (caerEventPacketHeader (EventPacket::*)()) &EventPacket::getHeaderPointer)
+        .def("getHeaderPointer", (caerEventPacketHeaderConst (EventPacket::*)() const) &EventPacket::getHeaderPointer)
         .def("isPacketMemoryOwner", &EventPacket::isPacketMemoryOwner)
         .def("capacity", &EventPacket::capacity)
         .def("size", &EventPacket::size)
         .def("empty", &EventPacket::empty);
+
+    py::class_<EventPacket::GenericEvent>(event_packet, "GenericEvent")
+        .def_readwrite("event", &EventPacket::GenericEvent::event)
+        .def_readwrite("header", &EventPacket::GenericEvent::header)
+        .def("getTimestamp", &EventPacket::GenericEvent::getTimestamp)
+        .def("getTimestamp64", &EventPacket::GenericEvent::getTimestamp64)
+        .def("isValid", &EventPacket::GenericEvent::isValid);
+
+    py::enum_<EventPacket::copyTypes>(event_packet, "copyTypes")
+        .value("FULL", EventPacket::copyTypes::FULL)
+        .value("EVENTS_ONLY", EventPacket::copyTypes::EVENTS_ONLY)
+        .value("VALID_EVENTS_ONLY", EventPacket::copyTypes::VALID_EVENTS_ONLY)
+        .export_values();
 
     // ------ Devices ------
     py::module pydevices = libpycaer.def_submodule("devices", "The Devices submodule");
