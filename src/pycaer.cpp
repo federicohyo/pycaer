@@ -87,6 +87,9 @@ PYBIND11_MODULE(pycaer, libpycaer) {
     // ------ Events ------
     py::module pyevents = libpycaer.def_submodule("events", "The Events submodule");
 
+    // EventPacketIterator
+    // not implemented
+
     // EventPacket
     py::class_<EventPacket> event_packet(pyevents, "EventPacket");
     event_packet
@@ -142,6 +145,11 @@ PYBIND11_MODULE(pycaer, libpycaer) {
         .value("EVENTS_ONLY", EventPacket::copyTypes::EVENTS_ONLY)
         .value("VALID_EVENTS_ONLY", EventPacket::copyTypes::VALID_EVENTS_ONLY)
         .export_values();
+
+    py::class_<EventPacketCommon, EventPacket> event_packet_common(pyevents, "EventPacketCommon");
+    event_packet_common
+        .def("getEvent", (EventPacketCommon::reference (EventPacketCommon::*)(EventPacketCommon::size_type)) &EventPacketCommon::getEvent);
+        .def("getEvent", (EventPacketCommon::const_reference (EventPacketCommon::*)(EventPacketCommon::size_type) const) &EventPacketCommon::getEvent);
 
     // ------ Devices ------
     py::module pydevices = libpycaer.def_submodule("devices", "The Devices submodule");
