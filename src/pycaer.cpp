@@ -196,6 +196,7 @@ PYBIND11_MODULE(pycaer, libpycaer) {
         .def("setParameter", &ConfigurationEvent::setParameter);
 
     // ConfigurationEventPacket
+    py::class_<EventPacketCommon<ConfigurationEventPacket, ConfigurationEvent>>(pyevents, "EventPacketCommon<ConfigurationEventPacket, ConfigurationEvent>");
     py::class_<ConfigurationEventPacket, EventPacketCommon<ConfigurationEventPacket, ConfigurationEvent>> config_event_packet(pyevents, "ConfigurationEventPacket");
     config_event_packet
         .def(py::init<EventPacketCommon<ConfigurationEventPacket, ConfigurationEvent>::size_type, int16_t, int32_t>())
