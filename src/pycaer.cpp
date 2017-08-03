@@ -44,9 +44,9 @@ using namespace libcaer::events;
 using namespace libcaer::devices;
 
 PYBIND11_MODULE(pycaer, libpycaer) {
-	libpycaer.doc() = "The master module of libcaer";
+    libpycaer.doc() = "The master module of libcaer";
 
-	// ------ Log ------
+    // ------ Log ------
     py::module pylog = libpycaer.def_submodule("log", "The log submodule");
 
     py::enum_<libcaer::log::logLevel>(pylog, "logLevel")
