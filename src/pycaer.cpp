@@ -51,14 +51,14 @@ PYBIND11_MODULE(pycaer, libpycaer) {
 
     py::enum_<libcaer::log::logLevel>(pylog, "logLevel")
     	.value("EMERGENCY", libcaer::log::logLevel::EMERGENCY)
-		.value("ALERT", libcaer::log::logLevel::ALERT)
-		.value("CRITICAL", libcaer::log::logLevel::CRITICAL)
-		.value("ERROR", libcaer::log::logLevel::ERROR)
-		.value("WARNING", libcaer::log::logLevel::WARNING)
-		.value("NOTICE", libcaer::log::logLevel::NOTICE)
-		.value("INFO", libcaer::log::logLevel::INFO)
-		.value("DEBUG", libcaer::log::logLevel::DEBUG)
-		.export_values();
+        .value("ALERT", libcaer::log::logLevel::ALERT)
+        .value("CRITICAL", libcaer::log::logLevel::CRITICAL)
+        .value("ERROR", libcaer::log::logLevel::ERROR)
+        .value("WARNING", libcaer::log::logLevel::WARNING)
+        .value("NOTICE", libcaer::log::logLevel::NOTICE)
+        .value("INFO", libcaer::log::logLevel::INFO)
+        .value("DEBUG", libcaer::log::logLevel::DEBUG)
+        .export_values();
 
     pylog.def("logLevelSet", &libcaer::log::logLevelSet);
     pylog.def("logLevelGet", &libcaer::log::logLevelGet);
@@ -91,17 +91,17 @@ PYBIND11_MODULE(pycaer, libpycaer) {
     py::module pynetwork = libpycaer.def_submodule("network", "The Network submodule");
     py::class_<AEDAT3NetworkHeader>(pynetwork, "AEDAT3NetworkHeader")
     	.def(py::init<>())
-		.def(py::init<const uint8_t *>())
+        .def(py::init<const uint8_t *>())
     	.def("getMagicNumber", &AEDAT3NetworkHeader::getMagicNumber)
-		.def("checkMagicNumber", &AEDAT3NetworkHeader::checkMagicNumber)
-		.def("getSequenceNumber", &AEDAT3NetworkHeader::getSequenceNumber)
-		.def("incrementSequenceNumber", &AEDAT3NetworkHeader::incrementSequenceNumber)
-		.def("getVersionNumber", &AEDAT3NetworkHeader::getVersionNumber)
-		.def("checkVersionNumber", &AEDAT3NetworkHeader::checkVersionNumber)
-		.def("getFormatNumber", &AEDAT3NetworkHeader::getFormatNumber)
-		.def("setFormatNumber", &AEDAT3NetworkHeader::setFormatNumber)
-		.def("getSourceID", &AEDAT3NetworkHeader::getSourceID)
-		.def("setSourceID", &AEDAT3NetworkHeader::setSourceID);
+        .def("checkMagicNumber", &AEDAT3NetworkHeader::checkMagicNumber)
+        .def("getSequenceNumber", &AEDAT3NetworkHeader::getSequenceNumber)
+        .def("incrementSequenceNumber", &AEDAT3NetworkHeader::incrementSequenceNumber)
+        .def("getVersionNumber", &AEDAT3NetworkHeader::getVersionNumber)
+        .def("checkVersionNumber", &AEDAT3NetworkHeader::checkVersionNumber)
+        .def("getFormatNumber", &AEDAT3NetworkHeader::getFormatNumber)
+        .def("setFormatNumber", &AEDAT3NetworkHeader::setFormatNumber)
+        .def("getSourceID", &AEDAT3NetworkHeader::getSourceID)
+        .def("setSourceID", &AEDAT3NetworkHeader::setSourceID);
 
     // ------ Events ------
     py::module pyevents = libpycaer.def_submodule("events", "The Events submodule");
