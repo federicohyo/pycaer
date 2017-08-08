@@ -25,6 +25,7 @@
 #include <libcaer/events/sample.h>
 #include <libcaer/events/special.h>
 #include <libcaer/events/spike.h>
+#include <libcaer/devices/dvs128.h>
 
 // libcaer CPP
 #include <libcaercpp/libcaer.hpp>
@@ -38,7 +39,7 @@
 #include <libcaercpp/devices/edvs.hpp>
 
 namespace py = pybind11;
-//using namespace libcaer::log;
+using namespace libcaer::log;
 using namespace libcaer::network;
 using namespace libcaer::events;
 using namespace libcaer::devices;
@@ -49,41 +50,41 @@ PYBIND11_MODULE(pycaer, libpycaer) {
     // ------ Log ------
     py::module pylog = libpycaer.def_submodule("log", "The log submodule");
 
-    py::enum_<libcaer::log::logLevel>(pylog, "logLevel")
-    	.value("EMERGENCY", libcaer::log::logLevel::EMERGENCY)
-        .value("ALERT", libcaer::log::logLevel::ALERT)
-        .value("CRITICAL", libcaer::log::logLevel::CRITICAL)
-        .value("ERROR", libcaer::log::logLevel::ERROR)
-        .value("WARNING", libcaer::log::logLevel::WARNING)
-        .value("NOTICE", libcaer::log::logLevel::NOTICE)
-        .value("INFO", libcaer::log::logLevel::INFO)
-        .value("DEBUG", libcaer::log::logLevel::DEBUG)
+    py::enum_<logLevel>(pylog, "logLevel")
+    	.value("EMERGENCY", logLevel::EMERGENCY)
+        .value("ALERT", logLevel::ALERT)
+        .value("CRITICAL", logLevel::CRITICAL)
+        .value("ERROR", logLevel::ERROR)
+        .value("WARNING", logLevel::WARNING)
+        .value("NOTICE", logLevel::NOTICE)
+        .value("INFO", logLevel::INFO)
+        .value("DEBUG", logLevel::DEBUG)
         .export_values();
 
-    pylog.def("logLevelSet", &libcaer::log::logLevelSet);
-    pylog.def("logLevelGet", &libcaer::log::logLevelGet);
-    pylog.def("fileDescriptorsSet", &libcaer::log::fileDescriptorsSet);
-    pylog.def("fileDescriptorsGetFirst", &libcaer::log::fileDescriptorsGetFirst);
-    pylog.def("fileDescriptorsGetSecond", &libcaer::log::fileDescriptorsGetSecond);
+    pylog.def("logLevelSet", &logLevelSet);
+    pylog.def("logLevelGet", &logLevelGet);
+    pylog.def("fileDescriptorsSet", &fileDescriptorsSet);
+    pylog.def("fileDescriptorsGetFirst", &fileDescriptorsGetFirst);
+    pylog.def("fileDescriptorsGetSecond", &fileDescriptorsGetSecond);
 
-    pylog.def("log", [](libcaer::log::logLevel l, const char *subSystem, py::str format, py::args args, py::kwargs kwargs){
+    pylog.def("log", [](logLevel l, const char *subSystem, py::str format, py::args args, py::kwargs kwargs){
         std::string formatted = format.format(*args, **kwargs);
-        libcaer::log::log(l, subSystem, formatted.c_str());
+        log(l, subSystem, formatted.c_str());
     });
 
-    pylog.def("logVA", [](libcaer::log::logLevel l, const char *subSystem, py::str format, py::args args, py::kwargs kwargs){
+    pylog.def("logVA", [](logLevel l, const char *subSystem, py::str format, py::args args, py::kwargs kwargs){
         va_list argumentList;
         std::string formatted = format.format(*args, **kwargs);
 
-        caerLogVA(static_cast<enum caer_log_level>(static_cast<typename std::underlying_type<libcaer::log::logLevel>::type>(l)), subSystem, formatted.c_str(), argumentList);
+        caerLogVA(static_cast<enum caer_log_level>(static_cast<typename std::underlying_type<logLevel>::type>(l)), subSystem, formatted.c_str(), argumentList);
     });
 
-    pylog.def("logVAFull", [](int logFileDescriptor1, int logFileDescriptor2, uint8_t systemLogLevel, libcaer::log::logLevel l, const char *subSystem, py::str format, py::args args, py::kwargs kwargs){
+    pylog.def("logVAFull", [](int logFileDescriptor1, int logFileDescriptor2, uint8_t systemLogLevel, logLevel l, const char *subSystem, py::str format, py::args args, py::kwargs kwargs){
         va_list argumentList;
         std::string formatted = format.format(*args, **kwargs);
 
         caerLogVAFull(logFileDescriptor1, logFileDescriptor2, systemLogLevel,
-                static_cast<enum caer_log_level>(static_cast<typename std::underlying_type<libcaer::log::logLevel>::type>(l)), subSystem, formatted.c_str(), argumentList);
+                static_cast<enum caer_log_level>(static_cast<typename std::underlying_type<logLevel>::type>(l)), subSystem, formatted.c_str(), argumentList);
 
     });
 
@@ -721,6 +722,18 @@ PYBIND11_MODULE(pycaer, libpycaer) {
         .def(py::init<uint16_t, uint8_t, uint8_t, const std::string &>());
 
     // DVS128
+    py::class_<caer_dvs128_info>(pydevices, "caer_dvs128_info")
+        .def_readwrite("deviceID", &caer_dvs128_info::deviceID)
+        // TODO
+        // .def_readwrite("deviceSerialNumber", &caer_dvs128_info::deviceSerialNumber)
+        .def_readwrite("deviceUSBBusNumber", &caer_dvs128_info::deviceUSBBusNumber)
+        .def_readwrite("deviceUSBDeviceAddress", &caer_dvs128_info::deviceUSBDeviceAddress)
+        .def_readwrite("deviceString", &caer_dvs128_info::deviceString)
+        .def_readwrite("logicVersion", &caer_dvs128_info::logicVersion)
+        .def_readwrite("deviceIsMaster", &caer_dvs128_info::deviceIsMaster)
+        .def_readwrite("dvsSizeX", &caer_dvs128_info::dvsSizeX)
+        .def_readwrite("dvsSizeY", &caer_dvs128_info::dvsSizeY);
+
     py::class_<dvs128, usb> dvs128_device(pydevices, "dvs128");
     dvs128_device
         .def(py::init<uint16_t>())
