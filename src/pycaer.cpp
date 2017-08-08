@@ -204,6 +204,10 @@ PYBIND11_MODULE(pycaer, libpycaer) {
         .def(py::init<caerEventPacketHeader, bool>());
     
     // EarEvent
+    py::class_<caer_ear_event>(pyevents, "caer_ear_event")
+        .def_readwrite("data", &caer_ear_event::data)
+        .def_readwrite("timestamp", &caer_ear_event::timestamp);
+
     py::class_<EarEvent, caer_ear_event> ear_event(pyevents, "EarEvent");
     ear_event
         .def("getTimestamp", &EarEvent::getTimestamp)
@@ -222,6 +226,7 @@ PYBIND11_MODULE(pycaer, libpycaer) {
         .def("setFilter", &EarEvent::setFilter);
 
     // EarEventPacket
+    py::class_<EventPacketCommon<EarEventPacket, EarEvent>>(pyevents, "EventPacketCommon<EarEventPacket, EarEvent>");
     py::class_<EarEventPacket, EventPacketCommon<EarEventPacket, EarEvent>> ear_event_packet(pyevents, "EarEventPacket");
     ear_event_packet
         .def(py::init<EventPacketCommon<EarEventPacket, EarEvent>::size_type, int16_t, int32_t>())
@@ -229,6 +234,19 @@ PYBIND11_MODULE(pycaer, libpycaer) {
         .def(py::init<caerEventPacketHeader, bool>());
 
     // FrameEvent
+    py::class_<caer_frame_event>(pyevents, "caer_frame_event")
+        .def_readwrite("info", &caer_frame_event::info)
+        .def_readwrite("ts_startframe", &caer_frame_event::ts_startframe)
+        .def_readwrite("ts_endframe", &caer_frame_event::ts_endframe)
+        .def_readwrite("ts_startexposure", &caer_frame_event::ts_startexposure)
+        .def_readwrite("ts_endexposure", &caer_frame_event::ts_endexposure)
+        .def_readwrite("lengthX", &caer_frame_event::lengthX)
+        .def_readwrite("lengthY", &caer_frame_event::lengthY)
+        .def_readwrite("positionX", &caer_frame_event::positionX)
+        .def_readwrite("positionY", &caer_frame_event::positionY);
+        // TODO
+        // .def_readwrite("pixels", &caer_frame_event::pixels);
+
     py::class_<FrameEvent, caer_frame_event> frame_event(pyevents, "FrameEvent");
     frame_event
         // colorChannels
@@ -295,6 +313,7 @@ PYBIND11_MODULE(pycaer, libpycaer) {
         .export_values();
 
     // FrameEventPacket
+    py::class_<EventPacketCommon<FrameEventPacket, FrameEvent>>(pyevents, "EventPacketCommon<FrameEventPacket, FrameEvent>");
     py::class_<FrameEventPacket, EventPacketCommon<FrameEventPacket, FrameEvent>> frame_event_packet(pyevents, "FrameEventPacket");
     frame_event_packet
         .def(py::init<EventPacketCommon<FrameEventPacket, FrameEvent>::size_type, int16_t, int32_t, int32_t, int32_t, int16_t>())
@@ -314,6 +333,17 @@ PYBIND11_MODULE(pycaer, libpycaer) {
         .export_values();
 
     // IMU6Event
+    py::class_<caer_imu6_event>(pyevents, "caer_imu6_event")
+        .def_readwrite("info", &caer_imu6_event::info)
+        .def_readwrite("timestamp", &caer_imu6_event::timestamp)
+        .def_readwrite("accel_x", &caer_imu6_event::accel_x)
+        .def_readwrite("accel_y", &caer_imu6_event::accel_y)
+        .def_readwrite("accel_z", &caer_imu6_event::accel_z)
+        .def_readwrite("gyro_x", &caer_imu6_event::gyro_x)
+        .def_readwrite("gyro_y", &caer_imu6_event::gyro_y)
+        .def_readwrite("gyro_z", &caer_imu6_event::gyro_z)
+        .def_readwrite("temp", &caer_imu6_event::temp);
+
     py::class_<IMU6Event, caer_imu6_event> imu6_event(pyevents, "IMU6Event");
     imu6_event
         .def("getTimestamp", &IMU6Event::getTimestamp)
@@ -338,6 +368,7 @@ PYBIND11_MODULE(pycaer, libpycaer) {
         .def("setTemp", &IMU6Event::setTemp);
 
     // IMU6EventPacket
+    py::class_<EventPacketCommon<IMU6EventPacket, IMU6Event>>(pyevents, "EventPacketCommon<IMU6EventPacket, IMU6Event>");
     py::class_<IMU6EventPacket, EventPacketCommon<IMU6EventPacket, IMU6Event>> imu6_event_packet(pyevents, "IMU6EventPacket");
     imu6_event_packet
         .def(py::init<EventPacketCommon<IMU6EventPacket, IMU6Event>::size_type, int16_t, int32_t>())
@@ -345,6 +376,20 @@ PYBIND11_MODULE(pycaer, libpycaer) {
         .def(py::init<caerEventPacketHeader, bool>());
 
     // IMU9Event
+    py::class_<caer_imu9_event>(pyevents, "caer_imu9_event")
+        .def_readwrite("info", &caer_imu9_event::info)
+        .def_readwrite("timestamp", &caer_imu9_event::timestamp)
+        .def_readwrite("accel_x", &caer_imu9_event::accel_x)
+        .def_readwrite("accel_y", &caer_imu9_event::accel_y)
+        .def_readwrite("accel_z", &caer_imu9_event::accel_z)
+        .def_readwrite("gyro_x", &caer_imu9_event::gyro_x)
+        .def_readwrite("gyro_y", &caer_imu9_event::gyro_y)
+        .def_readwrite("gyro_z", &caer_imu9_event::gyro_z)
+        .def_readwrite("temp", &caer_imu9_event::temp)
+        .def_readwrite("comp_x", &caer_imu9_event::comp_x)
+        .def_readwrite("comp_y", &caer_imu9_event::comp_y)
+        .def_readwrite("comp_z", &caer_imu9_event::comp_z);
+
     py::class_<IMU9Event, caer_imu9_event> imu9_event(pyevents, "IMU9Event");
     imu9_event
         .def("getTimestamp", &IMU9Event::getTimestamp)
@@ -375,6 +420,7 @@ PYBIND11_MODULE(pycaer, libpycaer) {
         .def("setCompZ", &IMU9Event::setCompZ);
 
     // IMU9EventPacket
+    py::class_<EventPacketCommon<IMU9EventPacket, IMU9Event>>(pyevents, "EventPacketCommon<IMU9EventPacket, IMU9Event>");
     py::class_<IMU9EventPacket, EventPacketCommon<IMU9EventPacket, IMU9Event>> imu9_event_packet(pyevents, "IMU9EventPacket");
     imu9_event_packet
         .def(py::init<EventPacketCommon<IMU9EventPacket, IMU9Event>::size_type, int16_t, int32_t>())
@@ -382,6 +428,11 @@ PYBIND11_MODULE(pycaer, libpycaer) {
         .def(py::init<caerEventPacketHeader, bool>());
 
     // Point1DEvent 
+    py::class_<caer_point1d_event>(pyevents, "caer_point1d_event")
+        .def_readwrite("info", &caer_point1d_event::info)
+        .def_readwrite("x", &caer_point1d_event::x)
+        .def_readwrite("timestamp", &caer_point1d_event::timestamp);
+
     py::class_<Point1DEvent, caer_point1d_event> point1d_event(pyevents, "Point1DEvent");
     point1d_event
         .def("getTimestamp", &Point1DEvent::getTimestamp)
@@ -398,6 +449,7 @@ PYBIND11_MODULE(pycaer, libpycaer) {
         .def("setX", &Point1DEvent::setX);
 
     // Point1DEventPacket
+    py::class_<EventPacketCommon<Point1DEventPacket, Point1DEvent>>(pyevents, "EventPacketCommon<Point1DEventPacket, Point1DEvent>");
     py::class_<Point1DEventPacket, EventPacketCommon<Point1DEventPacket, Point1DEvent>> point1d_event_packet(pyevents, "Point1DEventPacket");
     point1d_event_packet
         .def(py::init<EventPacketCommon<Point1DEventPacket, Point1DEvent>::size_type, int16_t, int32_t>())
@@ -405,6 +457,12 @@ PYBIND11_MODULE(pycaer, libpycaer) {
         .def(py::init<caerEventPacketHeader, bool>());
 
     // Point2DEvent
+    py::class_<caer_point2d_event>(pyevents, "caer_point2d_event")
+        .def_readwrite("info", &caer_point2d_event::info)
+        .def_readwrite("x", &caer_point2d_event::x)
+        .def_readwrite("y", &caer_point2d_event::y)
+        .def_readwrite("timestamp", &caer_point2d_event::timestamp);
+
     py::class_<Point2DEvent, caer_point2d_event> point2d_event(pyevents, "Point2DEvent");
     point2d_event
         .def("getTimestamp", &Point2DEvent::getTimestamp)
@@ -423,6 +481,7 @@ PYBIND11_MODULE(pycaer, libpycaer) {
         .def("setY", &Point2DEvent::setY);
 
     // Point2DEventPacket
+    py::class_<EventPacketCommon<Point2DEventPacket, Point2DEvent>>(pyevents, "EventPacketCommon<Point2DEventPacket, Point2DEvent>");
     py::class_<Point2DEventPacket, EventPacketCommon<Point2DEventPacket, Point2DEvent>> point2d_event_packet(pyevents, "Point2DEventPacket");
     point2d_event_packet
         .def(py::init<EventPacketCommon<Point2DEventPacket, Point2DEvent>::size_type, int16_t, int32_t>())
@@ -430,6 +489,13 @@ PYBIND11_MODULE(pycaer, libpycaer) {
         .def(py::init<caerEventPacketHeader, bool>());
 
     // Point3DEvent
+    py::class_<caer_point3d_event>(pyevents, "caer_point3d_event")
+        .def_readwrite("info", &caer_point3d_event::info)
+        .def_readwrite("x", &caer_point3d_event::x)
+        .def_readwrite("y", &caer_point3d_event::y)
+        .def_readwrite("z", &caer_point3d_event::y)
+        .def_readwrite("timestamp", &caer_point3d_event::timestamp);
+
     py::class_<Point3DEvent, caer_point3d_event> point3d_event(pyevents, "Point3DEvent");
     point3d_event
         .def("getTimestamp", &Point3DEvent::getTimestamp)
@@ -450,6 +516,7 @@ PYBIND11_MODULE(pycaer, libpycaer) {
         .def("setZ", &Point3DEvent::setZ);
 
     // Point3DEventPacket
+    py::class_<EventPacketCommon<Point3DEventPacket, Point3DEvent>>(pyevents, "EventPacketCommon<Point3DEventPacket, Point3DEvent>");
     py::class_<Point3DEventPacket, EventPacketCommon<Point3DEventPacket, Point3DEvent>> point3d_event_packet(pyevents, "Point3DEventPacket");
     point3d_event_packet
         .def(py::init<EventPacketCommon<Point3DEventPacket, Point3DEvent>::size_type, int16_t, int32_t>())
@@ -457,6 +524,14 @@ PYBIND11_MODULE(pycaer, libpycaer) {
         .def(py::init<caerEventPacketHeader, bool>());
 
     // Point4DEvent
+    py::class_<caer_point4d_event>(pyevents, "caer_point4d_event")
+        .def_readwrite("info", &caer_point4d_event::info)
+        .def_readwrite("x", &caer_point4d_event::x)
+        .def_readwrite("y", &caer_point4d_event::y)
+        .def_readwrite("z", &caer_point4d_event::y)
+        .def_readwrite("w", &caer_point4d_event::y)
+        .def_readwrite("timestamp", &caer_point4d_event::timestamp);
+
     py::class_<Point4DEvent, caer_point4d_event> point4d_event(pyevents, "Point4DEvent");
     point4d_event
         .def("getTimestamp", &Point4DEvent::getTimestamp)
@@ -479,6 +554,7 @@ PYBIND11_MODULE(pycaer, libpycaer) {
         .def("setW", &Point4DEvent::setW);
 
     // Point4DEventPacket
+    py::class_<EventPacketCommon<Point4DEventPacket, Point4DEvent>>(pyevents, "EventPacketCommon<Point4DEventPacket, Point4DEvent>");
     py::class_<Point4DEventPacket, EventPacketCommon<Point4DEventPacket, Point4DEvent>> point4d_event_packet(pyevents, "Point4DEventPacket");
     point4d_event_packet
         .def(py::init<EventPacketCommon<Point4DEventPacket, Point4DEvent>::size_type, int16_t, int32_t>())
@@ -486,6 +562,10 @@ PYBIND11_MODULE(pycaer, libpycaer) {
         .def(py::init<caerEventPacketHeader, bool>());
 
     // PolarityEvent
+    py::class_<caer_polarity_event>(pyevents, "caer_polarity_event")
+        .def_readwrite("data", &caer_polarity_event::data)
+        .def_readwrite("timestamp", &caer_polarity_event::timestamp);
+
     py::class_<PolarityEvent, caer_polarity_event> polarity_event(pyevents, "PolarityEvent");
     polarity_event
         .def("getTimestamp", &PolarityEvent::getTimestamp)
@@ -502,6 +582,7 @@ PYBIND11_MODULE(pycaer, libpycaer) {
         .def("setX", &PolarityEvent::setX);
 
     // PolarityEventPacket
+    py::class_<EventPacketCommon<PolarityEventPacket, PolarityEvent>>(pyevents, "EventPacketCommon<PolarityEventPacket, PolarityEvent>");
     py::class_<PolarityEventPacket, EventPacketCommon<PolarityEventPacket, PolarityEvent>> polarity_event_packet(pyevents, "PolarityEventPacket");
     polarity_event_packet
         .def(py::init<EventPacketCommon<PolarityEventPacket, PolarityEvent>::size_type, int16_t, int32_t>())
@@ -509,6 +590,10 @@ PYBIND11_MODULE(pycaer, libpycaer) {
         .def(py::init<caerEventPacketHeader, bool>());
 
     // SampleEvent
+    py::class_<caer_sample_event>(pyevents, "caer_sample_event")
+        .def_readwrite("data", &caer_sample_event::data)
+        .def_readwrite("timestamp", &caer_sample_event::timestamp);
+
     py::class_<SampleEvent, caer_sample_event> sample_event(pyevents, "SampleEvent");
     sample_event
         .def("getTimestamp", &SampleEvent::getTimestamp)
@@ -523,6 +608,7 @@ PYBIND11_MODULE(pycaer, libpycaer) {
         .def("setSample", &SampleEvent::setSample);
 
     // SampleEventPacket
+    py::class_<EventPacketCommon<SampleEventPacket, SampleEvent>>(pyevents, "EventPacketCommon<SampleEventPacket, SampleEvent>");
     py::class_<SampleEventPacket, EventPacketCommon<SampleEventPacket, SampleEvent>> sample_event_packet(pyevents, "SampleEventPacket");
     sample_event_packet
         .def(py::init<EventPacketCommon<SampleEventPacket, SampleEvent>::size_type, int16_t, int32_t>())
@@ -530,6 +616,10 @@ PYBIND11_MODULE(pycaer, libpycaer) {
         .def(py::init<caerEventPacketHeader, bool>());
 
     // SpecialEvent
+    py::class_<caer_special_event>(pyevents, "caer_special_event")
+        .def_readwrite("data", &caer_special_event::data)
+        .def_readwrite("timestamp", &caer_special_event::timestamp);
+
     py::class_<SpecialEvent, caer_special_event> special_event(pyevents, "SpecialEvent");
     special_event
         .def("getTimestamp", &SpecialEvent::getTimestamp)
@@ -544,6 +634,7 @@ PYBIND11_MODULE(pycaer, libpycaer) {
         .def("setData", &SpecialEvent::setData);
 
     // SpecialEventPacket
+    py::class_<EventPacketCommon<SpecialEventPacket, SpecialEvent>>(pyevents, "EventPacketCommon<SpecialEventPacket, SpecialEvent>");
     py::class_<SpecialEventPacket, EventPacketCommon<SpecialEventPacket, SpecialEvent>> special_event_packet(pyevents, "SpecialEventPacket");
     special_event_packet
         .def(py::init<EventPacketCommon<SpecialEventPacket, SpecialEvent>::size_type, int16_t, int32_t>())
@@ -551,6 +642,10 @@ PYBIND11_MODULE(pycaer, libpycaer) {
         .def(py::init<caerEventPacketHeader, bool>());
 
     // SpikeEvent
+    py::class_<caer_spike_event>(pyevents, "caer_spike_event")
+        .def_readwrite("data", &caer_spike_event::data)
+        .def_readwrite("timestamp", &caer_spike_event::timestamp);
+
     py::class_<SpikeEvent, caer_spike_event> spike_event(pyevents, "SpikeEvent");
     spike_event
         .def("getTimestamp", &SpikeEvent::getTimestamp)
@@ -569,6 +664,7 @@ PYBIND11_MODULE(pycaer, libpycaer) {
         .def("getY", &SpikeEvent::getY);
 
     // SpikeEventPacket
+    py::class_<EventPacketCommon<SpikeEventPacket, SpikeEvent>>(pyevents, "EventPacketCommon<SpikeEventPacket, SpikeEvent>");
     py::class_<SpikeEventPacket, EventPacketCommon<SpikeEventPacket, SpikeEvent>> spike_event_packet(pyevents, "SpikeEventPacket");
     spike_event_packet
         .def(py::init<EventPacketCommon<SpikeEventPacket, SpikeEvent>::size_type, int16_t, int32_t>())
@@ -594,6 +690,12 @@ PYBIND11_MODULE(pycaer, libpycaer) {
         .def("dataStart", &device::dataStart)
         .def("dataStop", &device::dataStop)
         .def("dataGet", &device::dataGet);
+
+    // USB
+    py::class_<usb, device>(pydevices, "usb");
+
+    // Serial
+    py::class_<serial, device>(pydevices, "serial");
 
     // DAVIS
     py::class_<davis, usb> davis_device(pydevices, "davis");
