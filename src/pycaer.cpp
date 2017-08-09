@@ -724,8 +724,7 @@ PYBIND11_MODULE(pycaer, libpycaer) {
     // DVS128
     py::class_<caer_dvs128_info>(pydevices, "caer_dvs128_info")
         .def_readwrite("deviceID", &caer_dvs128_info::deviceID)
-        // TODO
-        // .def_readwrite("deviceSerialNumber", &caer_dvs128_info::deviceSerialNumber)
+        .def_readonly("deviceSerialNumber", &caer_dvs128_info::deviceSerialNumber)
         .def_readwrite("deviceUSBBusNumber", &caer_dvs128_info::deviceUSBBusNumber)
         .def_readwrite("deviceUSBDeviceAddress", &caer_dvs128_info::deviceUSBDeviceAddress)
         .def_readwrite("deviceString", &caer_dvs128_info::deviceString)
