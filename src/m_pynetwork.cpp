@@ -1,5 +1,5 @@
 /*
- * m_pylog for logging functions
+ * m_pynetwork for network function
  *
  * Author: Yuhuang Hu
  * Email : duguyue100@gmail.com
