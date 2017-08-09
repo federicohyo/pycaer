@@ -17,7 +17,7 @@ case "$fn" in
             cd libcaer
             mkdir build
             cmake -DCMAKE_INSTALL_PREFIX=./build .
-            make
+            make -j8
             make install
             cd ..
         else
@@ -31,7 +31,7 @@ case "$fn" in
             mkdir build
             cd build
             cmake -DPYTHON_EXECUTABLE:FILEPATH=$(which python) ..
-            make
+            make -j8
         else
             echo "[MESSAGE] pycaer compiled"
         fi
@@ -44,7 +44,7 @@ case "$fn" in
             mkdir build
         fi
         cmake -DCMAKE_INSTALL_PREFIX=./build .
-        make
+        make -j8
         make install
         cd ..
     ;;
@@ -58,7 +58,7 @@ case "$fn" in
         fi
         cd build
         cmake -DPYTHON_EXECUTABLE:FILEPATH=$(which python) ..
-        make
+        make -j8
     ;;
 
     "clean")
