@@ -244,9 +244,8 @@ PYBIND11_MODULE(pycaer, libpycaer) {
         .def_readwrite("lengthX", &caer_frame_event::lengthX)
         .def_readwrite("lengthY", &caer_frame_event::lengthY)
         .def_readwrite("positionX", &caer_frame_event::positionX)
-        .def_readwrite("positionY", &caer_frame_event::positionY);
-        // TODO
-        // .def_readwrite("pixels", &caer_frame_event::pixels);
+        .def_readwrite("positionY", &caer_frame_event::positionY)
+        .def_readonly("pixels", &caer_frame_event::pixels);
 
     py::class_<FrameEvent, caer_frame_event> frame_event(pyevents, "FrameEvent");
     frame_event
