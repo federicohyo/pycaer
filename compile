@@ -61,6 +61,11 @@ case "$fn" in
         make -j8
     ;;
 
+    "spiker")
+        echo "[MESSAGE] Install for spiker"
+        cp $PWD/build/pycaer.so $PWD/../spiker
+    ;;
+
     "clean")
         # remove build directory
         echo "[MESSAGE] Removing pycaer build directory"
