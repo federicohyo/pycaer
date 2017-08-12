@@ -11,6 +11,17 @@ Python `libcaer` bindings with Pybind11
 + `libserialport` (optional)
 + OpenCV (support from Anaconda)
 
+## Checked Functions
+
++ [x] Logging
++ [x] Network
++ [ ] Events
++ [ ] Devices
+   + [ ] DVS128
+   + [ ] DAVIS
+   + [ ] DYNAP
+   + [ ] EDVS
+
 ## Clone the repository
 
 ```
