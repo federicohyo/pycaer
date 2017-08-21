@@ -15,6 +15,7 @@ dvs128_info = dvs128_handle.infoGet()
 
 print (dvs128_info.deviceID)
 print (dvs128_info.deviceString)
+print (dvs128_info.deviceSerialNumber)
 print (dvs128_info.deviceIsMaster)
 print (dvs128_info.dvsSizeX)
 print (dvs128_info.dvsSizeY)
@@ -32,4 +33,4 @@ foll_bias = dvs128_handle.configGet(1, 10)
 
 print (pr_bias, foll_bias)
 
-dvs128_handle.dataStart(None, None, None, None, None)
+#  dvs128_handle.dataStart(None, None, None, None, None)
