@@ -588,9 +588,7 @@ void pyevents_module(py::module &libpycaer)
         .def("getChipID", &SpikeEvent::getChipID)
         .def("setChipID", &SpikeEvent::setChipID)
         .def("getNeuronID", &SpikeEvent::getNeuronID)
-        .def("setNeuronID", &SpikeEvent::setNeuronID)
-        .def("getX", &SpikeEvent::getX)
-        .def("getY", &SpikeEvent::getY);
+        .def("setNeuronID", &SpikeEvent::setNeuronID);
 
     // SpikeEventPacket
     py::class_<EventPacketCommon<SpikeEventPacket, SpikeEvent>>(pyevents, "EventPacketCommon<SpikeEventPacket, SpikeEvent>");

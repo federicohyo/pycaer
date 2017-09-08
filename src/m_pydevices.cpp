@@ -17,9 +17,12 @@
 #include <libcaercpp/devices/dvs128.hpp>
 #include <libcaercpp/devices/dynapse.hpp>
 #include <libcaercpp/devices/edvs.hpp>
+#include <libcaercpp/events/spike.hpp>
+#include <libcaercpp/events/special.hpp>
 
 namespace py = pybind11;
 using namespace libcaer::devices;
+using namespace libcaer::events;
 
 void pydevices_module(py::module &libpycaer)
 {
@@ -76,7 +79,7 @@ void pydevices_module(py::module &libpycaer)
         .def_readonly("deviceSerialNumber", &caer_dvs128_info::deviceSerialNumber)
         .def_readwrite("deviceUSBBusNumber", &caer_dvs128_info::deviceUSBBusNumber)
         .def_readwrite("deviceUSBDeviceAddress", &caer_dvs128_info::deviceUSBDeviceAddress)
-        .def_readwrite("deviceString", &caer_dvs128_info::deviceString)
+        .def_readonly("deviceString", &caer_dvs128_info::deviceString)
         .def_readwrite("logicVersion", &caer_dvs128_info::logicVersion)
         .def_readwrite("deviceIsMaster", &caer_dvs128_info::deviceIsMaster)
         .def_readwrite("dvsSizeX", &caer_dvs128_info::dvsSizeX)
@@ -96,10 +99,22 @@ void pydevices_module(py::module &libpycaer)
         .def("infoGet", &dynapse::infoGet)
         .def("sendDataToUSB", &dynapse::sendDataToUSB)
         .def("writeSramWords", &dynapse::writeSramWords)
-        .def("writeSram", &dynapse::writeSram)
+        .def("writeSramN", &dynapse::writeSramN)
         .def("writePoissonSpikeRate", &dynapse::writePoissonSpikeRate)
         .def("writeCam", &dynapse::writeCam)
-        .def("generateCamBits", &dynapse::generateCamBits);
+        .def("biasDynapseGenerate", &dynapse::biasDynapseGenerate)
+        .def("biasDynapseParse", &dynapse::biasDynapseParse)
+        .def("generateCamBits", &dynapse::generateCamBits)
+        .def("generateSramBits", &dynapse::generateSramBits)
+        .def("coreXYToNeuronId", &dynapse::coreXYToNeuronId)
+        .def("coreAddrToNeuronId", &dynapse::coreAddrToNeuronId)
+        // .def("spikeEventGetX", (uint16_t (dynapse::*)(const libcaer::events::SpikeEvent &)) &dynapse::spikeEventGetX)
+        // .def("spikeEventGetY", (uint16_t (dynapse::*)(const libcaer::events::SpikeEvent &)) &dynapse::spikeEventGetY)
+        // .def("spikeEventGetX", (uint16_t (dynapse::*)(const libcaer::events::SpikeEvent *)) &dynapse::spikeEventGetX)
+        // .def("spikeEventGetY", (uint16_t (dynapse::*)(const libcaer::events::SpikeEvent *)) &dynapse::spikeEventGetY)
+        // .def("spikeEventGetX", (uint16_t (dynapse::*)(const libcaer::events::SpikeEvent &)) &dynapse::spikeEventGetX)
+        // .def("spikeEventGetY", (uint16_t (dynapse::*)(const libcaer::events::SpikeEvent &)) &dynapse::spikeEventGetY)
+        .def("spikeEventFromXY", &dynapse::spikeEventFromXY);
 
     // eDVS
     py::class_<edvs, serial> edvs_device(pydevices, "edvs");
