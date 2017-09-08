@@ -9,6 +9,7 @@
 #include <pybind11/pybind11.h>
 
 // libcaer C
+#include <libcaer/devices/device.h>
 #include <libcaer/devices/dvs128.h>
 
 // libcaer CPP
@@ -36,11 +37,6 @@ void pydevices_module(py::module &libpycaer)
         .def("configGet", (void (device::*)(int8_t, uint8_t, uint32_t *) const) &device::configGet, "return void")
         .def("configGet", (uint32_t (device::*)(int8_t, uint8_t) const) &device::configGet, "return uint32_t")
         .def("dataStart", &device::dataStart)
-        // TODO
-        // .def("dataStartEmpty",
-        //     [](){
-        //         device::dataStart(nullptr, nullptr, nullptr, nullptr, nullptr);
-        //     })
         .def("dataStop", &device::dataStop)
         .def("dataGet", &device::dataGet);
 

@@ -13,13 +13,13 @@ dvs128_handle = devices.dvs128(1, 0, 0, "")
 # Get device info
 dvs128_info = dvs128_handle.infoGet()
 
-print (dvs128_info.deviceID)
-print (dvs128_info.deviceString)
-print (dvs128_info.deviceSerialNumber)
-print (dvs128_info.deviceIsMaster)
-print (dvs128_info.dvsSizeX)
-print (dvs128_info.dvsSizeY)
-print (dvs128_info.logicVersion)
+print ("%s - ID: %s, Master: %d, DVS X: %d, DVS Y: %d, Logic: %d" %
+       (dvs128_info.deviceString,
+        dvs128_info.deviceSerialNumber,
+        dvs128_info.deviceIsMaster,
+        dvs128_info.dvsSizeX,
+        dvs128_info.dvsSizeY,
+        dvs128_info.logicVersion))
 
 # send default configuration
 dvs128_handle.sendDefaultConfig()
@@ -33,4 +33,6 @@ foll_bias = dvs128_handle.configGet(1, 10)
 
 print (pr_bias, foll_bias)
 
-#  dvs128_handle.dataStart(None, None, None, None, None)
+dvs128_handle.dataStart(None, None, None, None, None)
+
+dvs128_handle.dataStop()
