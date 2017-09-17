@@ -5,6 +5,8 @@
  * Email : duguyue100@gmail.com
  */
 
+#include <csignal>
+#include <atomic>
 // PyBind11
 #include <pybind11/pybind11.h>
 
@@ -22,8 +24,99 @@
 #include <libcaercpp/events/special.hpp>
 
 namespace py = pybind11;
+using namespace std;
 using namespace libcaer::devices;
 using namespace libcaer::events;
+
+
+struct sigaction shutdownAction;
+static atomic_bool globalShutdown(false);
+
+static void globalShutdownSignalHandler(int signal) {
+    // Simply set the running flag to false on SIGTERM and SIGINT (CTRL+C) for global shutdown.
+    if (signal == SIGTERM || signal == SIGINT) {
+        globalShutdown.store(true);
+    }
+}
+
+static void usbShutdownHandler(void *ptr) {
+    (void)(ptr); // UNUSED.
+
+    globalShutdown.store(true);
+}
+
+void signal_handler()
+{
+    // Install signal handler for global shutdown.
+    shutdownAction.sa_handler = &globalShutdownSignalHandler;
+    shutdownAction.sa_flags = 0;
+    sigemptyset(&shutdownAction.sa_mask);
+    sigaddset(&shutdownAction.sa_mask, SIGTERM);
+    sigaddset(&shutdownAction.sa_mask, SIGINT);
+}
+
+class DVS128Exporter {
+    private:
+        dvs128 dvsHandle;
+        struct caer_dvs128_info dvsInfo;
+    public:
+
+        DVS128Exporter() :
+        dvsHandle(1, 0, 0, "")
+        {
+            dvsInfo = dvsHandle.infoGet();
+            dvsHandle.sendDefaultConfig();
+            dvsHandle.configSet(DVS128_CONFIG_BIAS, DVS128_CONFIG_BIAS_PR, 695);
+            dvsHandle.configSet(DVS128_CONFIG_BIAS, DVS128_CONFIG_BIAS_FOLL, 867);
+        }
+
+        void exporter_start()
+        {
+            dvsHandle.dataStart(nullptr, nullptr, nullptr, &usbShutdownHandler, nullptr);
+            dvsHandle.configSet(CAER_HOST_CONFIG_DATAEXCHANGE, CAER_HOST_CONFIG_DATAEXCHANGE_BLOCKING, true);
+        }
+
+
+        void export_data()
+        {
+            if (!globalShutdown.load(memory_order_relaxed))
+            {
+                std::unique_ptr<EventPacketContainer> packetContainer = dvsHandle.dataGet();
+
+                for (auto &packet : *packetContainer)
+                {
+                    if (packet->getEventType() == POLARITY_EVENT)
+                    {
+                        std::shared_ptr<const PolarityEventPacket> polarity = std::static_pointer_cast<PolarityEventPacket>(packet);
+
+                        // Get full timestamp and addresses of first event.
+                        const PolarityEvent &firstEvent = (*polarity)[0];
+
+                        int32_t ts = firstEvent.getTimstamp();
+                        uint16_t x = firstEvent.getX();
+                        uint16_t y = firstEvent.getY();
+                        bool pol = firstEvent.getPolarity();
+
+                    }
+                }
+            }
+            else
+            {
+                printf("no events");
+            }
+        }
+
+        void exporter_stop()
+        {
+            dvsHandle.dataStop();
+        }
+
+        struct caer_dvs128_info get_info()
+        {
+            return dvsInfo;
+        }
+};
+
 
 void pydevices_module(py::module &libpycaer)
 {
@@ -81,11 +174,13 @@ void pydevices_module(py::module &libpycaer)
         .def_readwrite("dvsSizeX", &caer_dvs128_info::dvsSizeX)
         .def_readwrite("dvsSizeY", &caer_dvs128_info::dvsSizeY);
 
-    py::class_<dvs128, usb> dvs128_device(pydevices, "dvs128");
-    dvs128_device
-        .def(py::init<uint16_t>())
-        .def(py::init<uint16_t, uint8_t, uint8_t, const std::string &>())
-        .def("infoGet", &dvs128::infoGet);
+    py::class_<DVS128Exporter> dvs128_exporter(pydevices, "DVS128Exporter");
+    dvs128_exporter
+        .def(py::init())
+        .def("exporter_start", &DVS128Exporter::exporter_start)
+        .def("exporter_stop", &DVS128Exporter::exporter_stop)
+        .def("export_data", &DVS128Exporter::export_data)
+        .def("get_info", &DVS128Exporter::get_info);
 
     // DYNAPSE
     py::class_<dynapse, usb> dynapse_device(pydevices, "dynapse");
