@@ -7,32 +7,29 @@ from __future__ import print_function
 
 import pycaer.devices as devices
 
-# Open a DVS 128
-dvs128_handle = devices.dvs128(1, 0, 0, "")
+import numpy as np
+import cv2
 
-# Get device info
-dvs128_info = dvs128_handle.infoGet()
+dvs128 = devices.DVS128Exporter()
 
-print ("%s - ID: %s, Master: %d, DVS X: %d, DVS Y: %d, Logic: %d" %
-       (dvs128_info.deviceString,
-        dvs128_info.deviceSerialNumber,
-        dvs128_info.deviceIsMaster,
-        dvs128_info.dvsSizeX,
-        dvs128_info.dvsSizeY,
-        dvs128_info.logicVersion))
+dvs128.exporter_start()
 
-# send default configuration
-dvs128_handle.sendDefaultConfig()
+idx = 1
+while True:
+    events = dvs128.export_data()
 
-# tweak some bias
-dvs128_handle.configSet(1, 11, 695)
-dvs128_handle.configSet(1, 10, 867)
+    print ("sample: ", idx)
+    idx += 1
+    img = np.zeros((128, 128), dtype=np.float)
+    for event in events:
+        if event.pol and event < 3:
+            img[event.x, event.y] += 1.
+        elif event.pol is False and event > -3:
+            img[event.x, event.y] -= 1.
+    img = (img+3.)/6.
+    cv2.imshow("image", img)
+    cv2.waitKey(10)
 
-pr_bias = dvs128_handle.configGet(1, 11)
-foll_bias = dvs128_handle.configGet(1, 10)
+    del events
 
-print (pr_bias, foll_bias)
-
-dvs128_handle.dataStart(None, None, None, None, None)
-
-dvs128_handle.dataStop()
+dvs128.exporter_stop()

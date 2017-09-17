@@ -7,8 +7,10 @@
 
 #include <csignal>
 #include <atomic>
+#include <vector>
 // PyBind11
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 
 // libcaer C
 #include <libcaer/devices/device.h>
@@ -20,8 +22,8 @@
 #include <libcaercpp/devices/dvs128.hpp>
 #include <libcaercpp/devices/dynapse.hpp>
 #include <libcaercpp/devices/edvs.hpp>
-#include <libcaercpp/events/spike.hpp>
-#include <libcaercpp/events/special.hpp>
+#include <libcaercpp/events/utils.hpp>
+#include <libcaercpp/events/polarity.hpp>
 
 namespace py = pybind11;
 using namespace std;
@@ -45,25 +47,28 @@ static void usbShutdownHandler(void *ptr) {
     globalShutdown.store(true);
 }
 
-void signal_handler()
-{
-    // Install signal handler for global shutdown.
-    shutdownAction.sa_handler = &globalShutdownSignalHandler;
-    shutdownAction.sa_flags = 0;
-    sigemptyset(&shutdownAction.sa_mask);
-    sigaddset(&shutdownAction.sa_mask, SIGTERM);
-    sigaddset(&shutdownAction.sa_mask, SIGINT);
-}
+struct DVSEvent{
+    int32_t ts;
+    uint16_t x;
+    uint16_t y;
+    bool pol;
+};
+
 
 class DVS128Exporter {
-    private:
+    public:
         dvs128 dvsHandle;
         struct caer_dvs128_info dvsInfo;
-    public:
 
         DVS128Exporter() :
         dvsHandle(1, 0, 0, "")
         {
+            shutdownAction.sa_handler = &globalShutdownSignalHandler;
+            shutdownAction.sa_flags = 0;
+            sigemptyset(&shutdownAction.sa_mask);
+            sigaddset(&shutdownAction.sa_mask, SIGTERM);
+            sigaddset(&shutdownAction.sa_mask, SIGINT);
+
             dvsInfo = dvsHandle.infoGet();
             dvsHandle.sendDefaultConfig();
             dvsHandle.configSet(DVS128_CONFIG_BIAS, DVS128_CONFIG_BIAS_PR, 695);
@@ -76,33 +81,32 @@ class DVS128Exporter {
             dvsHandle.configSet(CAER_HOST_CONFIG_DATAEXCHANGE, CAER_HOST_CONFIG_DATAEXCHANGE_BLOCKING, true);
         }
 
-
-        void export_data()
+        std::vector<DVSEvent> export_data()
         {
             if (!globalShutdown.load(memory_order_relaxed))
             {
                 std::unique_ptr<EventPacketContainer> packetContainer = dvsHandle.dataGet();
 
-                for (auto &packet : *packetContainer)
+                std::shared_ptr<EventPacket> packet = (*packetContainer)[-1];
+                printf("Packet of type %d -> %d events, %d capacity.\n", packet->getEventType(), packet->getEventNumber(), packet->getEventCapacity());
+
+                if (packet->getEventType() == POLARITY_EVENT)
                 {
-                    if (packet->getEventType() == POLARITY_EVENT)
+                    std::shared_ptr<const PolarityEventPacket> polarity = std::static_pointer_cast<PolarityEventPacket>(packet);
+
+                    std::vector<DVSEvent> dvs_events;
+                    for (int i=0; i<polarity->getEventNumber(); i++)
                     {
-                        std::shared_ptr<const PolarityEventPacket> polarity = std::static_pointer_cast<PolarityEventPacket>(packet);
-
-                        // Get full timestamp and addresses of first event.
-                        const PolarityEvent &firstEvent = (*polarity)[0];
-
-                        int32_t ts = firstEvent.getTimstamp();
-                        uint16_t x = firstEvent.getX();
-                        uint16_t y = firstEvent.getY();
-                        bool pol = firstEvent.getPolarity();
-
+                        const PolarityEvent &curr_event = (*polarity)[i];
+                        DVSEvent dvs_event;
+                        dvs_event.ts = curr_event.getTimestamp();
+                        dvs_event.x = curr_event.getX();
+                        dvs_event.y = curr_event.getY();
+                        dvs_event.pol = curr_event.getPolarity();
+                        dvs_events.push_back(dvs_event); 
                     }
+                    return dvs_events;
                 }
-            }
-            else
-            {
-                printf("no events");
             }
         }
 
@@ -173,6 +177,18 @@ void pydevices_module(py::module &libpycaer)
         .def_readwrite("deviceIsMaster", &caer_dvs128_info::deviceIsMaster)
         .def_readwrite("dvsSizeX", &caer_dvs128_info::dvsSizeX)
         .def_readwrite("dvsSizeY", &caer_dvs128_info::dvsSizeY);
+
+    py::class_<DVSEvent>(pydevices, "DVSEvent")
+        .def_readonly("ts", &DVSEvent::ts)
+        .def_readonly("x", &DVSEvent::x)
+        .def_readonly("y", &DVSEvent::y)
+        .def_readonly("pol", &DVSEvent::pol);
+
+    py::class_<dvs128, usb> dvs128_device(pydevices, "dvs128");
+    dvs128_device
+        .def(py::init<uint16_t>())
+        .def(py::init<uint16_t, uint8_t, uint8_t, const std::string &>())
+        .def("infoGet", &dvs128::infoGet);
 
     py::class_<DVS128Exporter> dvs128_exporter(pydevices, "DVS128Exporter");
     dvs128_exporter
