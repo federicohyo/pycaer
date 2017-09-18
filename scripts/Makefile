@@ -17,6 +17,9 @@ run:
 dvs128-example:
 	PYTHONPATH=$(PYTHONPATH) python dvs128_example.py
 
+dynapse-example:
+	PYTHONPATH=$(PYTHONPATH) python dynapse_example.py
+
 network-test:
 	PYTHONPATH=$(PYTHONPATH) python network_test.py
 

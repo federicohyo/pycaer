@@ -17,9 +17,9 @@ Python `libcaer` bindings with Pybind11
 + [x] Network
 + [ ] Events
 + [ ] Devices
-   + [ ] DVS128
+   + [x] DVS128
    + [ ] DAVIS
-   + [ ] DYNAP
+   + [x] DYNAP-SE
    + [ ] EDVS
 
 ## Clone the repository
@@ -42,6 +42,10 @@ $ ./compile make
 $ ./compile clean
 ```
 
+## Problems/Extensions?
+
+If you have any problems, please submit an issue or pull request!
+
 ## How to use
 
 The program is compiled as a single shared library `pycaer.so`,
@@ -50,6 +54,22 @@ one can directly import it in Python
 ```python
 import pycaer
 ```
+
+## Running Examples
+
+We have some test examples you can work on in `scripts` folder!
+
++ For DVS128, just run
+
+    ```
+    make dvs128-example
+    ```
+
++ For DYNAP-SE, just run
+
+    ```
+    make dynapse-example
+    ```
 
 ## Contacts
 
