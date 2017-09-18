@@ -54,6 +54,12 @@ struct DVSEvent{
     bool pol;
 };
 
+struct DYNAPSEEvent {
+    int32_t ts;
+    uint16_t neuid;
+    uint16_t coreid;
+    uint16_t chipid;
+};
 
 class DVS128Exporter {
     public:
@@ -61,7 +67,7 @@ class DVS128Exporter {
         struct caer_dvs128_info dvsInfo;
 
         DVS128Exporter() :
-        dvsHandle(1, 0, 0, "")
+        dvsHandle(1, CAER_DEVICE_DVS128, 0, "")
         {
             shutdownAction.sa_handler = &globalShutdownSignalHandler;
             shutdownAction.sa_flags = 0;
@@ -118,6 +124,70 @@ class DVS128Exporter {
         struct caer_dvs128_info get_info()
         {
             return dvsInfo;
+        }
+};
+
+class DYNAPSEExporter {
+    public:
+		dynapse dynapseHandle;
+        struct caer_dynapse_info dynapseInfo;
+
+        DYNAPSEExporter() :
+        	dynapseHandle(1, CAER_DEVICE_DYNAPSE, 0, "")
+        {
+            shutdownAction.sa_handler = &globalShutdownSignalHandler;
+            shutdownAction.sa_flags = 0;
+            sigemptyset(&shutdownAction.sa_mask);
+            sigaddset(&shutdownAction.sa_mask, SIGTERM);
+            sigaddset(&shutdownAction.sa_mask, SIGINT);
+
+            dynapseInfo = dynapseHandle.infoGet();
+            dynapseHandle.sendDefaultConfig();
+        }
+
+        void exporter_start()
+        {
+        	dynapseHandle.dataStart(nullptr, nullptr, nullptr, &usbShutdownHandler, nullptr);
+            dynapseHandle.configSet(CAER_HOST_CONFIG_DATAEXCHANGE, CAER_HOST_CONFIG_DATAEXCHANGE_BLOCKING, true);
+        }
+
+        std::vector<DYNAPSEEvent> export_data()
+        {
+            if (!globalShutdown.load(memory_order_relaxed))
+            {
+                std::unique_ptr<EventPacketContainer> packetContainer = dynapseHandle.dataGet();
+
+                std::shared_ptr<EventPacket> packet = (*packetContainer)[-1];
+                printf("Packet of type %d -> %d events, %d capacity.\n", packet->getEventType(), packet->getEventNumber(), packet->getEventCapacity());
+
+                if (packet->getEventType() == SPIKE_EVENT)
+                {
+                    std::shared_ptr<const SpikeEventPacket> spike = std::static_pointer_cast<SpikeEventPacket>(packet);
+
+                    std::vector<DYNAPSEEvent> dynapse_events;
+                    for (int i=0; i<spike->getEventNumber(); i++)
+                    {
+                        const SpikeEvent &curr_event = (*spike)[i];
+                        DYNAPSEEvent dynapse_event;
+                        dynapse_event.ts = curr_event.getTimestamp();
+                        dynapse_event.neuid = curr_event.getNeuronID();
+                        dynapse_event.coreid = curr_event.getSourceCoreID();
+                        dynapse_event.chipid = curr_event.getChipID();
+                        dynapse_events.push_back(dynapse_event);
+                    }
+                    return dynapse_events;
+                }
+            }
+        }
+
+        void exporter_stop()
+        {
+        	dynapseHandle.dataStop();
+        }
+
+        struct caer_dynapse_info get_info()
+        {
+            return dynapseInfo;
         }
 };
 
@@ -222,6 +292,20 @@ void pydevices_module(py::module &libpycaer)
         // .def("spikeEventGetX", (uint16_t (dynapse::*)(const libcaer::events::SpikeEvent &)) &dynapse::spikeEventGetX)
         // .def("spikeEventGetY", (uint16_t (dynapse::*)(const libcaer::events::SpikeEvent &)) &dynapse::spikeEventGetY)
         .def("spikeEventFromXY", &dynapse::spikeEventFromXY);
+
+    py::class_<DYNAPSEEvent>(pydevices, "DYNAPSEEvent")
+        .def_readonly("ts", &DYNAPSEEvent::ts)
+        .def_readonly("neuid", &DYNAPSEEvent::neuid)
+        .def_readonly("coreid", &DYNAPSEEvent::coreid)
+        .def_readonly("chipid", &DYNAPSEEvent::chipid);
+
+    py::class_<DYNAPSEExporter> dynapse_exporter(pydevices, "DYNAPSEExporter");
+    dynapse_exporter
+        .def(py::init())
+        .def("exporter_start", &DYNAPSEExporter::exporter_start)
+        .def("exporter_stop", &DYNAPSEExporter::exporter_stop)
+        .def("export_data", &DYNAPSEExporter::export_data)
+        .def("get_info", &DYNAPSEExporter::get_info);
 
     // eDVS
     py::class_<edvs, serial> edvs_device(pydevices, "edvs");
