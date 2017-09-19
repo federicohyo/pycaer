@@ -17,9 +17,9 @@ Python `libcaer` bindings with Pybind11
 + [x] Network
 + [ ] Events
 + [ ] Devices
-   + [x] DVS128
+   + [ ] DVS128
    + [ ] DAVIS
-   + [x] DYNAP
+   + [ ] DYNAP
    + [ ] EDVS
 
 ## Clone the repository
