@@ -71,7 +71,7 @@ We have some test examples you can work on in `scripts` folder!
     make dynapse-example
     ```
     
-    the script example 'dynapse_visualizer.py' exploits glumpy to visualize spikes. Glumpy is a scientific library for fast visualization, it is interfaced with numpy and OpenGL. 
+    The example script 'dynapse_visualizer.py' depends on glumpy and shows a real-time raster plot from the dynapse board. 
     ![Alt text](/docs/images/RasterDynapse.png?raw=true "RasterPlot Dynap-se")
 
 
