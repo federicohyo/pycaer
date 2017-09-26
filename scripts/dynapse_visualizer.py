@@ -65,12 +65,14 @@ dtt = 0;
    
 @window.event    
 def on_close():
+    global dynapse
     setattr(t, "do_run", False)
     #t.do_run = False
     t.join()
     dynapse.exporter_stop()
     print("closed thread ")
-    
+    del dynapse
+        
 @window.event
 def on_draw(dt):
     global dtt 
