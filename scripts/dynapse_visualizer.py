@@ -57,7 +57,7 @@ def read_events(q):
         del events
         time.sleep(0.03)
     
-# start thread that reads from net, it communicates to the main via the Queue q
+# start thread that reads from usb, it communicates to the main via the Queue q
 t = threading.Thread(target=read_events,args=(q,))
 lock = threading.Lock()
 t.start()    
