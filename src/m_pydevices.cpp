@@ -158,7 +158,7 @@ class DYNAPSEExporter {
                 std::unique_ptr<EventPacketContainer> packetContainer = dynapseHandle.dataGet();
 
                 std::shared_ptr<EventPacket> packet = (*packetContainer)[-1];
-                printf("Packet of type %d -> %d events, %d capacity.\n", packet->getEventType(), packet->getEventNumber(), packet->getEventCapacity());
+                //printf("Packet of type %d -> %d events, %d capacity.\n", packet->getEventType(), packet->getEventNumber(), packet->getEventCapacity());
 
                 if (packet->getEventType() == SPIKE_EVENT)
                 {
