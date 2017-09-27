@@ -1,6 +1,7 @@
 # PyCAER
 
 Python `libcaer` bindings with Pybind11
+There exists another more complete and low level binding with python for libcaer, here https://github.com/inilabs/libcaer/tree/master/bindings/python_swig. Please check that too.
 
 ## Prerequisites
 
